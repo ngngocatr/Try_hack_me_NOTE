@@ -38,3 +38,26 @@ Wireshark có hai loại phương pháp tô màu gói tin: các quy tắc tạm 
 ![2026-01-24-11-56-40](../../images/2026-01-24-11-56-40.png)
 
 ### Traffic Sniffing
+Bạn có thể sử dụng nút có hình _vây cá mập_ màu xanh lam để bắt đầu _thu thập lưu lượng mạng_, nút màu đỏ sẽ _dừng quá trình thu thập_, và nút màu xanh lá cây sẽ _khởi động lại quá trình_ này. Thanh trạng thái cũng sẽ hiển thị giao diện thu thập đang được sử dụng và số lượng gói tin đã thu thập.
+![2026-01-24-21-58-26](../../images/2026-01-24-21-58-26.png)
+
+### Merge các tệp PCAP
+Wireshark có thể kết hợp hai tệp pcap thành một tệp duy nhất. Bạn có thể sử dụng đường dẫn menu "__File --> Merge__" để kết hợp một tệp pcap với tệp đã xử lý. Khi bạn chọn tệp thứ hai, Wireshark sẽ hiển thị tổng số gói tin trong tệp đã chọn. Sau khi bạn nhấp vào "__open__", nó sẽ kết hợp tệp pcap hiện có với tệp đã chọn và tạo một tệp pcap mới . Lưu ý rằng bạn cần lưu tệp pcap đã "kết hợp" trước khi làm việc với nó.
+
+![ẢNH](../../images/66c44fd9733427ea1181ad58-1760973498209.gif)
+
+### Xem chi tiết tệp
+Việc nắm rõ thông tin chi tiết về tệp rất hữu ích. Đặc biệt khi làm việc với nhiều tệp pcap , đôi khi bạn cần biết và nhớ lại thông tin chi tiết của tệp (_mã băm tệp, thời gian ghi, nhận xét tệp ghi, giao diện và số liệu thống kê_) để xác định tệp, phân loại và ưu tiên xử lý. Bạn có thể xem chi tiết bằng cách vào "__Statistics --> Capture File Properties__ hoặc bằng cách nhấp vào __biểu tượng pcap nằm ở góc dưới bên trái__" .
+![ẢNH](../../images/2.gif)
+
+## 3. Phân tích gói
+### 1. Phân tích gói
+Phân tích gói tin, còn được gọi là phân tích giao thức, là quá trình nghiên cứu chi tiết gói tin bằng cách giải mã các giao thức và trường có sẵn. Wireshark hỗ trợ một danh sách dài các giao thức để phân tích, và bạn cũng có thể tự viết các kịch bản phân tích của riêng mình
+
+_Lưu ý_: Phần này trình bày cách Wireshark sử dụng các lớp OSI để phân tích gói tin và cách sử dụng các lớp này để phân tích dữ liệu. Bạn được kỳ vọng đã có kiến ​​thức nền về mô hình OSI và cách hoạt động của nó. 
+
+### 2. Chi tiết gói
+Bạn có thể nhấp vào một gói tin trong ngăn danh sách gói tin để mở chi tiết của nó (nhấp đúp chuột sẽ mở chi tiết trong một cửa sổ mới). Các gói tin bao gồm từ 5 đến 7 lớp dựa trên mô hình OSI. Chúng ta sẽ xem xét tất cả các lớp này trong một gói tin HTTP từ một bản ghi mẫu. Hình ảnh bên dưới cho thấy gói tin số 27.
+![2026-01-24-22-22-26](../../images/2026-01-24-22-22-26.png)
+
+

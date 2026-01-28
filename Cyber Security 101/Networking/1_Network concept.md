@@ -82,7 +82,7 @@ Trong bài thuyết trình về mô hình ISO OSI, chúng ta đã đi từ dư�
 ### 1. Private IP
 ![2026-01-26-11-54-17](../../images/2026-01-26-11-54-17.png)
 
-## UDP và TCP
+## 4. UDP và TCP
 Giao thức _IP_ cho phép chúng ta truy cập vào máy chủ đích trên mạng; máy chủ được xác định bằng địa chỉ _IP_ của nó. Chúng ta cần các giao thức cho phép các tiến trình trên các máy chủ trong mạng giao tiếp với nhau. Có hai giao thức vận chuyển để thực hiện điều đó: `UDP` và `TCP` .
 ### 1. UDP
 Giao thức `UDP` (_User Datagram Protocol_) cho phép chúng ta truy cập một tiến trình cụ thể trên máy chủ đích. `UDP` là một giao thức đơn giản không cần thiết lập kết nối, hoạt động ở lớp vận chuyển, tức là `lớp 4`. Việc không cần thiết lập kết nối có nghĩa là nó không cần thiết lập kết nối. `UDP` thậm chí không cung cấp cơ chế để biết gói tin đã được gửi đi thành công hay chưa.
@@ -99,4 +99,45 @@ Kết nối `TCP` được thiết lập bằng cách sử dụng cái gọi là
 - **Gói SYN-ACK**: Máy chủ phản hồi gói `SYN` bằng gói `SYN-ACK`, trong đó thêm số thứ tự ban đầu được máy chủ chọn ngẫu nhiên.
 - **Gói ACK**: Quá trình bắt tay ba bước hoàn tất khi máy khách gửi gói `ACK` để xác nhận đã nhận được gói `SYN-ACK`
 ![2026-01-26-12-02-25](../../images/2026-01-26-12-02-25.png)
+
+## 5. Encapsulation(_Đóng gói_)
+Trong ngữ cảnh này, **đóng gói** đề cập đến quá trình mỗi lớp thêm một tiêu đề (và đôi khi là phần cuối) vào đơn vị dữ liệu nhận được và gửi đơn vị "đã đóng gói" đó đến lớp bên dưới.
+
+Khái niệm đóng gói rất quan trọng vì nó cho phép mỗi lớp tập trung vào chức năng được định sẵn của nó. Trong hình ảnh bên dưới, chúng ta có bốn bước sau:
+- `Application data`: Mọi thứ bắt đầu khi người dùng nhập dữ liệu họ muốn gửi vào ứng dụng. _Ví dụ, bạn viết một email hoặc tin nhắn tức thời và nhấn nút gửi_. Ứng dụng định dạng dữ liệu này và bắt đầu gửi nó theo giao thức ứng dụng được sử dụng, thông qua lớp bên dưới nó, _lớp vận chuyển_.
+- `Transport protocol segment or datagram`: Lớp vận chuyển, chẳng hạn như TCP hoặc UDP , thêm thông tin tiêu đề thích hợp và tạo `TCP Segment` (_phân đoạn TCP hoặc gói dữ liệu UDP_). Phân đoạn này được gửi đến lớp bên dưới nó, _lớp mạng_
+- `Network packet`:  Lớp mạng, tức là lớp Internet, thêm tiêu đề IP vào phân đoạn TCP hoặc gói dữ liệu UDP nhận được. Sau đó, **IP Packet** này được gửi đến lớp bên dưới nó, _lớp liên kết dữ liệu_
+- `Data link frame`: Ethernet hoặc WiFi nhận gói IP và thêm phần tiêu đề và phần cuối phù hợp, tạo thành một **frame**(_khung_) .
+
+**Quá trình đóng gói**: dữ liệu ban đầu từ **tầng ứng dụng**(_tầng 4_) --> khi xuống **tầng giao vận**(_tầng 3_) sẽ thêm header TCP hoặc UDP để tạo `TCP Segment` hoặc `UDP Datagram` --> tiếp theo xuống **tầng mạng**(_tầng 2_) sẽ thêm IP Header để có được `IP Packet` có thể được định tuyến qua Internet --> Cuối cùng ở **tầng liên kết dữ liệu**(_tầng 1_), ta thêm tiêu đề và phần cuối để có được `Ethernet hoặc Wifi frame`
+![2026-01-28-21-21-18](../../images/2026-01-28-21-21-18.png)
+
+Quá trình này được đảo ngược khi máy đích nhận được dữ liệu
+
+### Vòng đời của một Packet
+Dựa trên những gì chúng ta đã nghiên cứu cho đến hiện tại, chúng ta có thể giải thích một _phiên bản đơn giản hóa_ về vòng đời của một gói tin. Hãy xem xét kịch bản bạn tìm kiếm phòng trên TryHackMe.
+1. Trên trang tìm kiếm của TryHackMe, bạn nhập từ khóa tìm kiếm và nhấn Enter.
+2. Trình duyệt web của bạn, sử dụng HTTPS, chuẩn bị một yêu cầu HTTP và đẩy nó xuống lớp bên dưới, lớp vận chuyển.
+3. Lớp TCP cần thiết lập kết nối thông qua quá trình bắt tay ba bước giữa trình duyệt của bạn và máy chủ web TryHackMe. Sau khi thiết lập kết nối TCP , nó có thể gửi yêu cầu HTTP chứa truy vấn tìm kiếm. Mỗi phân đoạn TCP được tạo ra sẽ được gửi đến lớp bên dưới nó, lớp Internet.
+4. `IP nguồn` - máy của bạn, `IP đích` - máy chủ Tryhackme. Để gói tin đến được router, máy tính của bạn sẽ phải chuyển nó đến lớp thấp hơn đó chính là tầng liên kết dữ liệu
+5. Tùy thuộc vào giao thức, lớp liên kết sẽ thêm phần tiêu đề và phần cuối của lớp liên kết phù hợp, sau đó gói tin được gửi đến bộ định tuyến.
+6. Bộ định tuyến loại bỏ phần đầu và phần cuối của lớp liên kết, kiểm tra địa chỉ IP đích và các trường khác, rồi định tuyến gói tin đến liên kết phù hợp. Mỗi bộ định tuyến lặp lại quá trình này cho đến khi đến được bộ định tuyến của máy chủ đích.
+
+## 6. Telnet
+Giao thức **TELNET** (_Teletype Network_) là một giao thức mạng dùng để kết nối thiết bị đầu cuối từ xa. Nói một cách đơn giản hơn, `telnet client` cho phép bạn kết nối và giao tiếp với hệ thống từ xa cũng như đưa ra các lệnh bằng văn bản. Mặc dù ban đầu nó được sử dụng cho quản trị từ xa, chúng ta có thể sử dụng `telnet` để kết nối với bất kỳ máy chủ nào đang lắng nghe trên một cổng TCP
+
+Trên máy ảo mục tiêu, nhiều dịch vụ khác nhau đang chạy. Chúng ta sẽ thử nghiệm với ba trong số đó:
+
+- `Echo Server`: server này lặp lại tất cả những gì mình gửi đến nó, nó được cấu hình lắng nghe ở port `7`
+- `Daytime Server`: server này cho ta biết thời gian hiện tại(_của server đó_), nó được cấu hình lắng nghe trên port `13`
+- `Web server`(**HTTP**): Máy chủ này mặc định lắng nghe trên cổng TCP `80` và phục vụ các trang web.
+
+**Echo server**
+![2026-01-28-21-36-52](../../images/2026-01-28-21-36-52.png)
+
+**Daytime server**
+![2026-01-28-21-38-14](../../images/2026-01-28-21-38-14.png)
+
+**Web server**
+![2026-01-28-21-38-47](../../images/2026-01-28-21-38-47.png)
 
